@@ -454,7 +454,9 @@ export async function runEmbeddedPiAgent(
             log.info(
               `live session model switch detected before attempt for ${params.sessionId}: ${provider}/${modelId} -> ${nextSelection.provider}/${nextSelection.model}`,
             );
-            throw new LiveSessionModelSwitchError(nextSelection);
+            if (params.trigger !== "cron") {
+              throw new LiveSessionModelSwitchError(nextSelection);
+            }
           }
           const runtimeAuthRetry = authRetryPending;
           authRetryPending = false;
@@ -600,7 +602,9 @@ export async function runEmbeddedPiAgent(
             log.info(
               `live session model switch requested during active attempt for ${params.sessionId}: ${provider}/${modelId} -> ${requestedSelection.provider}/${requestedSelection.model}`,
             );
-            throw new LiveSessionModelSwitchError(requestedSelection);
+            if (params.trigger !== "cron") {
+              throw new LiveSessionModelSwitchError(requestedSelection);
+            }
           }
           const failedOrAbortedAttempt =
             aborted || Boolean(promptError) || Boolean(assistantErrorText) || timedOut;
@@ -615,7 +619,9 @@ export async function runEmbeddedPiAgent(
             log.info(
               `live session model switch detected after failed attempt for ${params.sessionId}: ${provider}/${modelId} -> ${persistedSelection.provider}/${persistedSelection.model}`,
             );
-            throw new LiveSessionModelSwitchError(persistedSelection);
+            if (params.trigger !== "cron") {
+              throw new LiveSessionModelSwitchError(persistedSelection);
+            }
           }
 
           // ── Timeout-triggered compaction ──────────────────────────────────
